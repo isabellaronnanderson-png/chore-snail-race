@@ -10,17 +10,13 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <style>
         :root {
-            /* Very soft, airy pastel blue-purple (lavender-tinged periwinkle ice) */
             --bg-color: #dbe2ef; 
-            /* A tiny step deeper for an ultra-subtle, clean track definition */
             --stadium-bg: #cbd3e3; 
             --text-main: #2b3240;
             --text-muted: #5c6475;
             --border-pixel: 4px solid #6d7587;
             --font-pixel: 'VT323', monospace;
-            
-            /* UI Containers */
-            --ui-card-bg: #edf2fa; /* Lightest pastel background for the main container */
+            --ui-card-bg: #edf2fa; 
             --ui-shadow: 0 8px 0px #b8c1d4;
             --track-shadow: 0 4px 0px #b2b9cb;
         }
@@ -66,8 +62,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             text-shadow: 2px 2px 0px #cbd6e2;
+        }
+
+        .pixel-flag {
+            width: 36px;
+            height: 36px;
+            image-rendering: pixelated;
+        }
+
+        .flag-left {
+            transform: scaleX(-1);
         }
 
         .subtitle {
@@ -79,7 +85,6 @@
             padding: 0 10px;
         }
 
-        /* Floating Corner Add Button */
         .fab-btn {
             position: absolute;
             top: -20px;
@@ -103,7 +108,6 @@
             box-shadow: 0 2px 0px #ad751f;
         }
 
-        /* Modal / Form Pop-up */
         .modal {
             display: none;
             position: fixed;
@@ -151,10 +155,6 @@
             outline: none;
         }
 
-        input:focus, select:focus {
-            border-color: #e3a034;
-        }
-
         .modal-buttons {
             display: flex;
             justify-content: space-between;
@@ -173,16 +173,12 @@
             border-radius: 6px;
         }
         .btn-success { background: #8bcfae; box-shadow: 0 4px 0 #5f9e82; color: white; }
-        .btn-success:hover { background: #7bbe9e; }
         .btn-danger { background: #e09292; box-shadow: 0 4px 0 #ab6565; color: white; }
-        .btn-danger:hover { background: #cf8383; }
 
-        /* Categorized Stadium Tracks Container */
         .stadium-wrapper {
             margin-bottom: 40px;
         }
 
-        /* Category Titles */
         .group-title {
             font-size: 26px;
             text-transform: uppercase;
@@ -192,10 +188,10 @@
             letter-spacing: 1px;
         }
 
-        .house-title { color: #b07e0e; }
-        .beauty-title { color: #9c4776; }
-        .health-title { color: #2c7d48; }
-        .work-title { color: #23678c; }
+        .house-title { color: #d6985c; } 
+        .beauty-title { color: #cf7e9d; } 
+        .health-title { color: #73b58c; } 
+        .work-title { color: #6a9abf; } 
 
         .group-stadium {
             border: var(--border-pixel);
@@ -206,7 +202,10 @@
             box-shadow: var(--track-shadow);
         }
 
-        /* Multi-Lane Layout */
+        .lanes-container {
+            width: 100%;
+        }
+
         .stadium-lane {
             position: relative;
             border-bottom: 4px dashed #abb2c4;
@@ -214,14 +213,14 @@
             display: flex;
             align-items: center;
             min-height: 90px;
+            gap: 14px;
         }
         .stadium-lane:last-child {
             border-bottom: none;
         }
 
-        /* Sidebar Info Board */
         .snail-label-zone {
-            width: 210px;
+            width: 200px;
             font-size: 24px;
             line-height: 1.2;
             padding-right: 14px;
@@ -238,42 +237,39 @@
             color: #4b5263;
         }
 
-        /* Track Running Lane (Stripes strictly secured here) */
         .race-field {
             flex: 1;
             position: relative;
             height: 52px;
-            margin-left: 14px;
+            margin-left: 14px; 
             background: repeating-linear-gradient(
                 90deg,
-                rgba(255, 255, 255, 0.15),
-                rgba(255, 255, 255, 0.15) 20px,
-                rgba(255, 255, 255, 0.3) 20px,
-                rgba(255, 255, 255, 0.3) 40px
+                rgba(255, 255, 255, 0.16) 0px,
+                rgba(255, 255, 255, 0.16) 24px,
+                rgba(255, 255, 255, 0.32) 24px,
+                rgba(255, 255, 255, 0.32) 48px
             );
             border-radius: 4px;
-            padding-right: 60px;
+            padding-right: 64px;
         }
 
-        /* Checkerboard Finish Flag Gate */
         .finish-line-stripe {
             position: absolute;
-            right: 15px;
+            right: 12px;
             top: 0;
             bottom: 0;
-            width: 16px;
+            width: 18px;
             background-color: #ffffff;
             background-image: 
-                linear-gradient(45deg, #6d7587 25%, transparent 25%, transparent 75%, #6d7587 75%),
-                linear-gradient(45deg, #6d7587 25%, #ffffff 25%, #ffffff 75%, #6d7587 75%);
+                linear-gradient(45deg, #5c6475 25%, transparent 25%, transparent 75%, #5c6475 75%),
+                linear-gradient(45deg, #5c6475 25%, #ffffff 25%, #ffffff 75%, #5c6475 75%);
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
-            border-left: 2px solid #6d7587;
-            border-right: 2px solid #6d7587;
-            z-index: 2;
+            border-left: 2px solid #5c6475;
+            border-right: 2px solid #5c6475;
+            z-index: 3;
         }
 
-        /* Decorative Track Props */
         .track-prop {
             position: absolute;
             font-size: 14px;
@@ -282,11 +278,10 @@
             pointer-events: none;
             z-index: 1;
         }
-        .prop-flower { bottom: 2px; right: 80px; }
+        .prop-flower { bottom: 2px; right: 90px; }
         .prop-grass { top: 2px; left: 40px; }
         .prop-pebble { bottom: 4px; left: 140px; }
 
-        /* Snail Container Asset Wrapper */
         .pixel-snail-container {
             position: absolute;
             left: 0;
@@ -301,14 +296,12 @@
             z-index: 5;
         }
 
-        /* Custom Pixel Snail SVG */
         .snail-svg {
             width: 52px;
             height: 38px;
             image-rendering: pixelated;
         }
 
-        /* Ready Flag Animation */
         .pixel-snail-container.waiting {
             animation: pixelBounce 0.5s steps(2) infinite alternate;
         }
@@ -318,7 +311,6 @@
             to { transform: translateY(-65%); }
         }
 
-        /* Dynamic Status Badges */
         .status-badge {
             font-size: 16px;
             padding: 2px 8px;
@@ -339,13 +331,11 @@
 
         @keyframes blink { to { opacity: 0.7; } }
 
-        /* Native App Controls */
         .action-icon {
             background: transparent;
             border: none;
             color: #838b9c;
             cursor: pointer;
-            margin-left: 12px;
             padding: 6px;
             border-radius: 4px;
             display: flex;
@@ -367,74 +357,52 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        /* ==========================================================================
-           📱 SMARTPHONE PROPORTIONS FIX 
-           ========================================================================== */
+        /* Mobile specific layout fixes */
         @media (max-width: 650px) {
-            body {
-                padding: 12px 6px;
-            }
-            .container {
-                padding: 24px 10px 16px 10px;
-            }
-            h1 {
-                font-size: 26px;
-                flex-wrap: wrap;
-                line-height: 1.2;
-            }
-            .subtitle {
-                font-size: 17px;
-            }
-            .group-stadium {
-                padding: 12px 10px;
-            }
+            body { padding: 12px 6px; }
+            .container { padding: 24px 10px 16px 10px; }
+            h1 { font-size: 26px; line-height: 1.2; }
+            .subtitle { font-size: 17px; }
+            .group-stadium { padding: 12px 8px; }
+            .pixel-flag { width: 26px; height: 26px; }
+
             .stadium-lane {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 12px;
-                padding: 16px 0 20px 0;
+                gap: 8px;
+                padding: 16px 4px;
             }
+
             .snail-label-zone {
                 width: 100%;
                 border-right: none;
-                padding-right: 32px; 
-                padding-bottom: 0;
-                display: block;
+                padding-right: 36px; 
             }
-            .snail-label-zone strong {
-                display: block;
-                font-size: 22px;
-                margin-bottom: 2px;
-            }
-            .snail-meta {
-                display: inline-block;
-                font-size: 16px;
-                margin-right: 10px;
-            }
-            .status-badge {
-                display: inline-block;
-                font-size: 14px;
-                vertical-align: middle;
-            }
+
+            /* NEW: Replaced failing mobile gradients with clean, pixel-styled lanes and fallback frames */
             .race-field {
-                margin-left: 0;
                 width: 100%;
-                height: 56px;
-                /* Re-enforce stripes explicitly inside mobile view state */
-                background: repeating-linear-gradient(
-                    90deg,
-                    rgba(255, 255, 255, 0.15),
-                    rgba(255, 255, 255, 0.15) 20px,
-                    rgba(255, 255, 255, 0.3) 20px,
-                    rgba(255, 255, 255, 0.3) 40px
-                );
+                margin-left: 0;
+                margin-top: 4px;
+                background: rgba(255, 255, 255, 0.1); 
+                border-top: 4px dashed #9ca4b5;
+                border-bottom: 4px dashed #9ca4b5;
+                border-radius: 0px;
             }
+
             .action-icon {
                 position: absolute;
-                top: 12px;
+                top: 16px;
                 right: 0;
-                margin-left: 0;
             }
+
+            /* Scaled down and repositioned obstacles for smaller tracks */
+            .track-prop {
+                font-size: 11px; 
+            }
+            .prop-flower { right: 70px; bottom: 2px; }
+            .prop-grass { left: 25px; top: 2px; }
+            .prop-pebble { left: 110px; bottom: 2px; }
         }
     </style>
 </head>
@@ -446,7 +414,21 @@
         </button>
 
         <header>
-            <h1>🏁 THE GREAT CHORE SLOW-DOWN 🏁</h1>
+            <h1>
+                <svg class="pixel-flag flag-left" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <path d="M2 1h2v13H2z M1 14h4v2H1z M2 0h2v1H2z" fill="#6d7587" />
+                    <path d="M4 2h2v8H4z M6 3h2v8H6z M8 2h2v8H8z M10 3h2v8H10z M12 2h2v8H12z" fill="#ffffff" />
+                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z M8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
+                </svg>
+                
+                THE GREAT CHORE SLOW-DOWN 
+                
+                <svg class="pixel-flag" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <path d="M2 1h2v13H2z M1 14h4v2H1z M2 0h2v1H2z" fill="#6d7587" />
+                    <path d="M4 2h2v8H4z M6 3h2v8H6z M8 2h2v8H8z M10 3h2v8H10z M12 2h2v8H12z" fill="#ffffff" />
+                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z Map 8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
+                </svg>
+            </h1>
             <p class="subtitle">Click a snail to reset its race track progress!</p>
         </header>
 
@@ -487,7 +469,6 @@
     </div>
 
     <script>
-        // Muted, pleasant pastel colors for the snail shells
         const snailColors = [
             '#e39696', '#9edba3', '#9ecceb', '#eed69b', 
             '#eebadc', '#cca6ed', '#eee7ad', '#f2b591'
@@ -500,7 +481,6 @@
             work: { name: "Work & Admin", class: "work-title" }
         };
 
-        // Initialize tasks from localStorage if available, otherwise default template tasks
         let tasks = JSON.parse(localStorage.getItem('snail_chore_tasks'));
         if (!tasks) {
             tasks = [
@@ -584,7 +564,7 @@
                 } else {
                     groupTasks.forEach((task, idx) => {
                         const { percent, isOverdue, statusMarkup } = calculateProgress(task);
-                        const leftPosition = `calc(${percent}% - 52px)`;
+                        const leftPosition = `calc(${percent}% - 56px)`;
                         
                         const shellColor = snailColors[idx % snailColors.length];
                         const snailSvgMarkup = generateSnailSvg(shellColor);
@@ -604,7 +584,7 @@
                                     <div class="finish-line-stripe"></div>
                                     
                                     <div class="pixel-snail-container ${isOverdue ? 'waiting' : ''}" 
-                                         style="left: ${percent >= 6 ? leftPosition : '0px'};"
+                                         style="left: ${percent >= 8 ? leftPosition : '0px'};"
                                          onclick="resetSnail(${task.id})"
                                          title="Reset Snail Track Progress">
                                          ${snailSvgMarkup}
@@ -668,7 +648,7 @@
         };
 
         renderTracks();
-        setInterval(renderTracks, 15000); // Refreshes tracks quietly in background
+        setInterval(renderTracks, 15000);
     </script>
 </body>
 </html>
