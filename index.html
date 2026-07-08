@@ -241,7 +241,7 @@
             flex: 1;
             position: relative;
             height: 52px;
-            margin-left: 14px; /* Restored desktop margin */
+            margin-left: 14px; 
             background: repeating-linear-gradient(
                 90deg,
                 rgba(255, 255, 255, 0.16) 0px,
@@ -369,7 +369,7 @@
             .stadium-lane {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 12px;
+                gap: 8px;
                 padding: 16px 4px;
             }
 
@@ -379,21 +379,11 @@
                 padding-right: 36px; /* Leaves room for the delete button */
             }
 
-            /* NEW: Distinct racing track for mobile */
             .race-field {
                 width: 100%;
                 margin-left: 0;
-                background-color: #b8c1d4; /* Darker track base for contrast */
-                background-image: repeating-linear-gradient(
-                    90deg,
-                    transparent 0px,
-                    transparent 24px,
-                    rgba(255, 255, 255, 0.4) 24px,
-                    rgba(255, 255, 255, 0.4) 48px
-                );
-                border: 2px solid #9ba4b5; /* Distinct track outline */
-                border-radius: 6px;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+                margin-top: 4px;
+                /* Inherits the transparent desktop gradient stripes seamlessly */
             }
 
             .action-icon {
@@ -401,11 +391,14 @@
                 top: 16px;
                 right: 0;
             }
-            
-            /* Ensures finish line sits snugly in the new border */
-            .finish-line-stripe {
-                right: 8px; 
+
+            /* Scale down and reposition obstacles for smaller tracks */
+            .track-prop {
+                font-size: 10px; 
             }
+            .prop-flower { right: 50px; bottom: 4px; }
+            .prop-grass { left: 15px; top: 4px; }
+            .prop-pebble { left: 80px; bottom: 6px; }
         }
     </style>
 </head>
