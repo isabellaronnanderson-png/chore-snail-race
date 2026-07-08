@@ -188,7 +188,6 @@
             letter-spacing: 1px;
         }
 
-        /* NEW: Warmer, pastel-leaning track titles */
         .house-title { color: #d6985c; } 
         .beauty-title { color: #cf7e9d; } 
         .health-title { color: #73b58c; } 
@@ -201,12 +200,10 @@
             padding: 16px 20px;
             position: relative;
             box-shadow: var(--track-shadow);
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
         }
 
         .lanes-container {
-            min-width: 650px; 
+            width: 100%;
         }
 
         .stadium-lane {
@@ -216,6 +213,7 @@
             display: flex;
             align-items: center;
             min-height: 90px;
+            gap: 14px;
         }
         .stadium-lane:last-child {
             border-bottom: none;
@@ -243,7 +241,6 @@
             flex: 1;
             position: relative;
             height: 52px;
-            margin-left: 14px;
             background: repeating-linear-gradient(
                 90deg,
                 rgba(255, 255, 255, 0.16) 0px,
@@ -338,7 +335,6 @@
             border: none;
             color: #838b9c;
             cursor: pointer;
-            margin-left: 12px;
             padding: 6px;
             border-radius: 4px;
             display: flex;
@@ -360,7 +356,7 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        /* NEW: Scaled flags for mobile responsiveness */
+        /* Mobile specific layout fixes */
         @media (max-width: 650px) {
             body { padding: 12px 6px; }
             .container { padding: 24px 10px 16px 10px; }
@@ -368,6 +364,29 @@
             .subtitle { font-size: 17px; }
             .group-stadium { padding: 12px 8px; }
             .pixel-flag { width: 26px; height: 26px; }
+
+            .stadium-lane {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 16px 4px;
+            }
+
+            .snail-label-zone {
+                width: 100%;
+                border-right: none;
+                padding-right: 36px; /* Leaves room for the delete button */
+            }
+
+            .race-field {
+                width: 100%;
+            }
+
+            .action-icon {
+                position: absolute;
+                top: 16px;
+                right: 0;
+            }
         }
     </style>
 </head>
