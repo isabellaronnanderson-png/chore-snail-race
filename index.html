@@ -379,15 +379,22 @@
                 padding-right: 36px; 
             }
 
-            /* NEW: Replaced failing mobile gradients with clean, pixel-styled lanes and fallback frames */
+            /* NEW: Expanded vertical space for clear track lanes & full finish line view */
             .race-field {
                 width: 100%;
                 margin-left: 0;
                 margin-top: 4px;
+                height: 64px; /* Widened from 52px to fit the lanes and finish line completely */
                 background: rgba(255, 255, 255, 0.1); 
                 border-top: 4px dashed #9ca4b5;
                 border-bottom: 4px dashed #9ca4b5;
                 border-radius: 0px;
+            }
+
+            /* Snug adjustment for the checkered box layout on mobile */
+            .finish-line-stripe {
+                right: 0px; 
+                border-right: none;
             }
 
             .action-icon {
@@ -396,13 +403,13 @@
                 right: 0;
             }
 
-            /* Scaled down and repositioned obstacles for smaller tracks */
+            /* Re-scaled and neatly padded track props */
             .track-prop {
                 font-size: 11px; 
             }
-            .prop-flower { right: 70px; bottom: 2px; }
-            .prop-grass { left: 25px; top: 2px; }
-            .prop-pebble { left: 110px; bottom: 2px; }
+            .prop-flower { right: 70px; bottom: 4px; }
+            .prop-grass { left: 25px; top: 4px; }
+            .prop-pebble { left: 110px; bottom: 4px; }
         }
     </style>
 </head>
@@ -426,7 +433,7 @@
                 <svg class="pixel-flag" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
                     <path d="M2 1h2v13H2z M1 14h4v2H1z M2 0h2v1H2z" fill="#6d7587" />
                     <path d="M4 2h2v8H4z M6 3h2v8H6z M8 2h2v8H8z M10 3h2v8H10z M12 2h2v8H12z" fill="#ffffff" />
-                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z Map 8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
+                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z M8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
                 </svg>
             </h1>
             <p class="subtitle">Click a snail to reset its race track progress!</p>
