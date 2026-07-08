@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snail Race Chore Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #dbe2ef; 
+            --stadium-bg: #cbd3e3; 
+            --text-main: #2b3240;
+            --text-muted: #5c6475;
+            --border-pixel: 4px solid #6d7587;
+            --font-pixel: 'VT323', monospace;
+            --ui-card-bg: #edf2fa; 
+            --ui-shadow: 0 8px 0px #b8c1d4;
+            --track-shadow: 0 4px 0px #b2b9cb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-pixel);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            background: var(--ui-card-bg);
+            border: var(--border-pixel);
+            border-radius: 16px;
+            padding: 40px 24px 24px 24px;
+            box-shadow: var(--ui-shadow);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 38px;
+            color: var(--text-main);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            text-shadow: 2px 2px 0px #cbd6e2;
+        }
+
+        .pixel-flag {
+            width: 36px;
+            height: 36px;
+            image-rendering: pixelated;
+        }
+
+        .flag-left {
+            transform: scaleX(-1);
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 10px;
+        }
+
+        .fab-btn {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            background: #e3a034; 
+            color: #ffffff;
+            border: var(--border-pixel);
+            border-radius: 8px;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0px #ad751f;
+            z-index: 10;
+        }
+        .fab-btn:hover {
+            background: #d4932c;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0px #ad751f;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--ui-card-bg);
+            border: var(--border-pixel);
+            border-radius: 12px;
+            padding: 30px;
+            z-index: 100;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 12px 0px rgba(0,0,0,0.1), 0 0 0 9999px rgba(109, 117, 135, 0.4);
+        }
+
+        .modal h2 {
+            font-size: 30px;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row label {
+            font-size: 20px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            background: #ffffff;
+            color: var(--text-main);
+            border: var(--border-pixel);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 22px;
+            font-family: var(--font-pixel);
+            outline: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #ffffff;
+            color: var(--text-main);
+            border: var(--border-pixel);
+            border-radius: 6px;
+        }
+        .btn-success { background: #8bcfae; box-shadow: 0 4px 0 #5f9e82; color: white; }
+        .btn-danger { background: #e09292; box-shadow: 0 4px 0 #ab6565; color: white; }
+
+        .stadium-wrapper {
+            margin-bottom: 40px;
+        }
+
+        .group-title {
+            font-size: 26px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            padding-left: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* NEW: Warmer, pastel-leaning track titles */
+        .house-title { color: #d6985c; } 
+        .beauty-title { color: #cf7e9d; } 
+        .health-title { color: #73b58c; } 
+        .work-title { color: #6a9abf; } 
+
+        .group-stadium {
+            border: var(--border-pixel);
+            border-radius: 12px;
+            background: var(--stadium-bg);
+            padding: 16px 20px;
+            position: relative;
+            box-shadow: var(--track-shadow);
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .lanes-container {
+            min-width: 650px; 
+        }
+
+        .stadium-lane {
+            position: relative;
+            border-bottom: 4px dashed #abb2c4;
+            padding: 16px 0;
+            display: flex;
+            align-items: center;
+            min-height: 90px;
+        }
+        .stadium-lane:last-child {
+            border-bottom: none;
+        }
+
+        .snail-label-zone {
+            width: 200px;
+            font-size: 24px;
+            line-height: 1.2;
+            padding-right: 14px;
+            border-right: 4px solid #abb2c4;
+            word-break: break-word;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .snail-meta {
+            font-size: 18px;
+            color: #4b5263;
+        }
+
+        .race-field {
+            flex: 1;
+            position: relative;
+            height: 52px;
+            margin-left: 14px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.16) 0px,
+                rgba(255, 255, 255, 0.16) 24px,
+                rgba(255, 255, 255, 0.32) 24px,
+                rgba(255, 255, 255, 0.32) 48px
+            );
+            border-radius: 4px;
+            padding-right: 64px;
+        }
+
+        .finish-line-stripe {
+            position: absolute;
+            right: 12px;
+            top: 0;
+            bottom: 0;
+            width: 18px;
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(45deg, #5c6475 25%, transparent 25%, transparent 75%, #5c6475 75%),
+                linear-gradient(45deg, #5c6475 25%, #ffffff 25%, #ffffff 75%, #5c6475 75%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            border-left: 2px solid #5c6475;
+            border-right: 2px solid #5c6475;
+            z-index: 3;
+        }
+
+        .track-prop {
+            position: absolute;
+            font-size: 14px;
+            opacity: 0.35;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .prop-flower { bottom: 2px; right: 90px; }
+        .prop-grass { top: 2px; left: 40px; }
+        .prop-pebble { bottom: 4px; left: 140px; }
+
+        .pixel-snail-container {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+            transition: left 0.5s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .snail-svg {
+            width: 52px;
+            height: 38px;
+            image-rendering: pixelated;
+        }
+
+        .pixel-snail-container.waiting {
+            animation: pixelBounce 0.5s steps(2) infinite alternate;
+        }
+
+        @keyframes pixelBounce {
+            from { transform: translateY(-50%); }
+            to { transform: translateY(-65%); }
+        }
+
+        .status-badge {
+            font-size: 16px;
+            padding: 2px 8px;
+            display: inline-block;
+            border-radius: 4px;
+            width: fit-content;
+        }
+        .status-overdue { 
+            background: #f2c9c9;
+            color: #8c3232; 
+            font-weight: bold; 
+            animation: blink 1.2s steps(2) infinite;
+        }
+        .status-running { 
+            background: #c9e6d0;
+            color: #1e522f; 
+        }
+
+        @keyframes blink { to { opacity: 0.7; } }
+
+        .action-icon {
+            background: transparent;
+            border: none;
+            color: #838b9c;
+            cursor: pointer;
+            margin-left: 12px;
+            padding: 6px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-icon:hover { 
+            color: #bf5a5a; 
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-track-msg {
+            font-size: 20px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 24px 0;
+            border: 4px dashed #b8c1d4;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* NEW: Scaled flags for mobile responsiveness */
+        @media (max-width: 650px) {
+            body { padding: 12px 6px; }
+            .container { padding: 24px 10px 16px 10px; }
+            h1 { font-size: 26px; line-height: 1.2; }
+            .subtitle { font-size: 17px; }
+            .group-stadium { padding: 12px 8px; }
+            .pixel-flag { width: 26px; height: 26px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button class="fab-btn" id="open-modal-btn" title="Add New Snail Competitor">
+            <i data-lucide="plus" style="width: 24px; height: 24px; stroke-width: 3px;"></i>
+        </button>
+
+        <header>
+            <h1>
+                <svg class="pixel-flag flag-left" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <path d="M2 1h2v13H2z M1 14h4v2H1z M2 0h2v1H2z" fill="#6d7587" />
+                    <path d="M4 2h2v8H4z M6 3h2v8H6z M8 2h2v8H8z M10 3h2v8H10z M12 2h2v8H12z" fill="#ffffff" />
+                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z M8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
+                </svg>
+                
+                THE GREAT CHORE SLOW-DOWN 
+                
+                <svg class="pixel-flag" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <path d="M2 1h2v13H2z M1 14h4v2H1z M2 0h2v1H2z" fill="#6d7587" />
+                    <path d="M4 2h2v8H4z M6 3h2v8H6z M8 2h2v8H8z M10 3h2v8H10z M12 2h2v8H12z" fill="#ffffff" />
+                    <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z M8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
+                </svg>
+            </h1>
+            <p class="subtitle">Click a snail to reset its race track progress!</p>
+        </header>
+
+        <div id="stadiums-root"></div>
+    </div>
+
+    <div class="modal" id="task-modal">
+        <h2>[ REGISTER NEW RACER ]</h2>
+        <div class="form-row">
+            <label>Chore Activity</label>
+            <input type="text" id="task-name" placeholder="e.g., Vacuum my room" autocomplete="off">
+        </div>
+        <div class="form-row">
+            <label>Race Division</label>
+            <select id="task-group">
+                <option value="house">House Upkeep</option>
+                <option value="beauty">Beauty & Care</option>
+                <option value="health">Health Logistics</option>
+                <option value="work">Work & Admin</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <label>Interval Target</label>
+            <input type="number" id="freq-val" min="1" value="3">
+        </div>
+        <div class="form-row">
+            <label>Time Dimension</label>
+            <select id="freq-unit">
+                <option value="days">Days</option>
+                <option value="weeks">Weeks</option>
+                <option value="months">Months</option>
+            </select>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-danger" id="close-modal-btn">Dismiss</button>
+            <button class="btn btn-success" id="create-btn">Spawn Snail</button>
+        </div>
+    </div>
+
+    <script>
+        const snailColors = [
+            '#e39696', '#9edba3', '#9ecceb', '#eed69b', 
+            '#eebadc', '#cca6ed', '#eee7ad', '#f2b591'
+        ];
+
+        const groups = {
+            house: { name: "House Upkeep", class: "house-title" },
+            beauty: { name: "Beauty & Care", class: "beauty-title" },
+            health: { name: "Health Logistics", class: "health-title" },
+            work: { name: "Work & Admin", class: "work-title" }
+        };
+
+        let tasks = JSON.parse(localStorage.getItem('snail_chore_tasks'));
+        if (!tasks) {
+            tasks = [
+                { id: 1, name: "Vacuum room", group: "house", freqVal: 3, freqUnit: "days", lastDone: Date.now() - (1.5 * 24 * 60 * 60 * 1000) },
+                { id: 2, name: "Mop kitchen flooring", group: "house", freqVal: 1, freqUnit: "weeks", lastDone: Date.now() - (5 * 24 * 60 * 60 * 1000) }, 
+                { id: 3, name: "Cut my hair", group: "beauty", freqVal: 6, freqUnit: "months", lastDone: Date.now() - (2 * 30 * 24 * 60 * 60 * 1000) },
+                { id: 4, name: "Replace toothbrush head", group: "health", freqVal: 3, freqUnit: "months", lastDone: Date.now() - (89 * 24 * 60 * 60 * 1000) }
+            ];
+            localStorage.setItem('snail_chore_tasks', JSON.stringify(tasks));
+        }
+
+        const stadiumsRoot = document.getElementById('stadiums-root');
+        const modal = document.getElementById('task-modal');
+
+        document.getElementById('open-modal-btn').onclick = () => modal.style.display = 'block';
+        document.getElementById('close-modal-btn').onclick = () => modal.style.display = 'none';
+
+        function saveToStorage() {
+            localStorage.setItem('snail_chore_tasks', JSON.stringify(tasks));
+        }
+
+        function calculateProgress(task) {
+            const now = Date.now();
+            const timePassed = now - task.lastDone;
+            
+            let totalGoalMs = task.freqVal * 24 * 60 * 60 * 1000;
+            if (task.freqUnit === 'weeks') {
+                totalGoalMs = task.freqVal * 7 * 24 * 60 * 60 * 1000;
+            } else if (task.freqUnit === 'months') {
+                totalGoalMs = task.freqVal * 30 * 24 * 60 * 60 * 1000;
+            }
+
+            let percent = (timePassed / totalGoalMs) * 100;
+            if (percent > 100) percent = 100;
+            if (percent < 0) percent = 0;
+
+            const msLeft = totalGoalMs - timePassed;
+            let statusMarkup = "";
+            let isOverdue = percent >= 100;
+
+            if (isOverdue) {
+                statusMarkup = `<span class="status-badge status-overdue">READY</span>`;
+            } else {
+                const daysLeft = Math.ceil(msLeft / (24 * 60 * 60 * 1000));
+                statusMarkup = `<span class="status-badge status-running">${daysLeft}D LEFT</span>`;
+            }
+
+            return { percent, isOverdue, statusMarkup };
+        }
+
+        function generateSnailSvg(shellColor, eyeColor = '#6d7587') {
+            return `
+                <svg class="snail-svg" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <path d="M2 10h12v1H2zM1 9h12v1H1z" fill="#fce5bd" />
+                    <path d="M11 8h2v1h-2zM12 5h1v3h-1zM13 4h1v1h-1z" fill="#fce5bd" />
+                    <path d="M13 2h1v1h-1z" fill="${eyeColor}" />
+                    <path d="M10 3h1v1h-1zM10 2h1v1h-1z" fill="#fce5bd" />
+                    <path d="M10 1h1v1h-1z" fill="${eyeColor}" />
+                    <path d="M4 4h5v5H4z" fill="${shellColor}" />
+                    <path d="M5 3h3v1H5zM5 9h3v1H5zM3 5h1v3H3zM9 5h1v3H9z" fill="${shellColor}" />
+                    <path d="M5 5h3v2H5z" fill="#ffffff" opacity="0.4" />
+                    <path d="M6 6h1v1H6z" fill="${shellColor}" />
+                </svg>
+            `;
+        }
+
+        function renderTracks() {
+            stadiumsRoot.innerHTML = '';
+
+            Object.keys(groups).forEach(groupKey => {
+                const groupConfig = groups[groupKey];
+                const groupTasks = tasks.filter(t => t.group === groupKey);
+
+                const stadiumWrapper = document.createElement('div');
+                stadiumWrapper.className = 'stadium-wrapper';
+                
+                let lanesHTML = '';
+                
+                if (groupTasks.length === 0) {
+                    lanesHTML = `<div class="empty-track-msg">No competitors assigned to this track division.</div>`;
+                } else {
+                    groupTasks.forEach((task, idx) => {
+                        const { percent, isOverdue, statusMarkup } = calculateProgress(task);
+                        const leftPosition = `calc(${percent}% - 56px)`;
+                        
+                        const shellColor = snailColors[idx % snailColors.length];
+                        const snailSvgMarkup = generateSnailSvg(shellColor);
+
+                        lanesHTML += `
+                            <div class="stadium-lane">
+                                <div class="snail-label-zone">
+                                    <strong>${task.name}</strong>
+                                    <div class="snail-meta">EVERY ${task.freqVal} ${task.freqUnit.toUpperCase()}</div>
+                                    ${statusMarkup}
+                                </div>
+                                <div class="race-field">
+                                    <span class="track-prop prop-flower">🌸</span>
+                                    <span class="track-prop prop-grass">🌿</span>
+                                    <span class="track-prop prop-pebble">🪨</span>
+                                    
+                                    <div class="finish-line-stripe"></div>
+                                    
+                                    <div class="pixel-snail-container ${isOverdue ? 'waiting' : ''}" 
+                                         style="left: ${percent >= 8 ? leftPosition : '0px'};"
+                                         onclick="resetSnail(${task.id})"
+                                         title="Reset Snail Track Progress">
+                                         ${snailSvgMarkup}
+                                    </div>
+                                </div>
+                                <button class="action-icon" onclick="deleteTask(${task.id})" title="Remove">
+                                    <i data-lucide="x-square" style="width:20px; height:20px;"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+
+                stadiumWrapper.innerHTML = `
+                    <div class="group-title ${groupConfig.class}">${groupConfig.name} Track</div>
+                    <div class="group-stadium">
+                        <div class="lanes-container">${lanesHTML}</div>
+                    </div>
+                `;
+                stadiumsRoot.appendChild(stadiumWrapper);
+            });
+
+            lucide.createIcons();
+        }
+
+        function resetSnail(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, lastDone: Date.now() } : t);
+            saveToStorage();
+            renderTracks();
+        }
+
+        function deleteTask(id) {
+            if(confirm("Disqualify this snail racer?")) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveToStorage();
+                renderTracks();
+            }
+        }
+
+        document.getElementById('create-btn').onclick = function() {
+            const name = document.getElementById('task-name').value.trim();
+            const group = document.getElementById('task-group').value;
+            const freqVal = parseInt(document.getElementById('freq-val').value);
+            const freqUnit = document.getElementById('freq-unit').value;
+
+            if(!name || !freqVal) return alert("Please specify the chore parameters!");
+
+            tasks.push({
+                id: Date.now(),
+                name: name,
+                group: group,
+                freqVal: freqVal,
+                freqUnit: freqUnit,
+                lastDone: Date.now()
+            });
+
+            document.getElementById('task-name').value = '';
+            modal.style.display = 'none';
+            saveToStorage();
+            renderTracks();
+        };
+
+        renderTracks();
+        setInterval(renderTracks, 15000);
+    </script>
+</body>
+</html>
