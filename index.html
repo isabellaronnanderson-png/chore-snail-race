@@ -188,6 +188,7 @@
             letter-spacing: 1px;
         }
 
+        /* NEW: Warmer, pastel-leaning track titles */
         .house-title { color: #d6985c; } 
         .beauty-title { color: #cf7e9d; } 
         .health-title { color: #73b58c; } 
@@ -357,6 +358,16 @@
             border: 4px dashed #b8c1d4;
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* NEW: Scaled flags for mobile responsiveness */
+        @media (max-width: 650px) {
+            body { padding: 12px 6px; }
+            .container { padding: 24px 10px 16px 10px; }
+            h1 { font-size: 26px; line-height: 1.2; }
+            .subtitle { font-size: 17px; }
+            .group-stadium { padding: 12px 8px; }
+            .pixel-flag { width: 26px; height: 26px; }
         }
     </style>
 </head>
