@@ -19,6 +19,7 @@
             --ui-card-bg: #edf2fa; 
             --ui-shadow: 0 8px 0px #b8c1d4;
             --track-shadow: 0 4px 0px #b2b9cb;
+            --race-field-height: 52px;
         }
 
         * {
@@ -240,7 +241,7 @@
         .race-field {
             flex: 1;
             position: relative;
-            height: 52px;
+            height: var(--race-field-height);
             margin-left: 14px; 
             background: repeating-linear-gradient(
                 90deg,
@@ -317,6 +318,10 @@
             display: inline-block;
             border-radius: 4px;
             width: fit-content;
+            cursor: pointer; /* Makes badge clickable */
+        }
+        .status-badge:hover {
+            filter: brightness(0.9);
         }
         .status-overdue { 
             background: #f2c9c9;
@@ -359,6 +364,9 @@
 
         /* Mobile specific layout fixes */
         @media (max-width: 650px) {
+            :root {
+                --race-field-height: 64px !important; /* Forces the wider pixel tracks */
+            }
             body { padding: 12px 6px; }
             .container { padding: 24px 10px 16px 10px; }
             h1 { font-size: 26px; line-height: 1.2; }
@@ -379,22 +387,27 @@
                 padding-right: 36px; 
             }
 
-            /* NEW: Expanded vertical space for clear track lanes & full finish line view */
             .race-field {
-                width: 100%;
-                margin-left: 0;
+                width: 100% !important;
+                margin-left: 0 !important;
                 margin-top: 4px;
-                height: 64px; /* Widened from 52px to fit the lanes and finish line completely */
-                background: rgba(255, 255, 255, 0.1); 
+                background: repeating-linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.16) 0px,
+                    rgba(255, 255, 255, 0.16) 24px,
+                    rgba(255, 255, 255, 0.32) 24px,
+                    rgba(255, 255, 255, 0.32) 48px
+                ) !important; /* Forced rendering fallback */
                 border-top: 4px dashed #9ca4b5;
                 border-bottom: 4px dashed #9ca4b5;
                 border-radius: 0px;
             }
 
-            /* Snug adjustment for the checkered box layout on mobile */
             .finish-line-stripe {
-                right: 0px; 
-                border-right: none;
+                right: 0px !important; 
+                border-right: none !important;
+                display: block !important;
+                visibility: visible !important;
             }
 
             .action-icon {
@@ -403,7 +416,6 @@
                 right: 0;
             }
 
-            /* Re-scaled and neatly padded track props */
             .track-prop {
                 font-size: 11px; 
             }
@@ -436,7 +448,7 @@
                     <path d="M4 2h2v2H4z M4 6h2v2H4z M6 5h2v2H6z M6 9h2v2H6z M8 2h2v2H8z M8 6h2v2H8z M10 5h2v2H10z M10 9h2v2H10z M12 2h2v2H12z M12 6h2v2H12z" fill="#2b3240" />
                 </svg>
             </h1>
-            <p class="subtitle">Click a snail to reset its race track progress!</p>
+            <p class="subtitle">Click a snail to reset progress! Click the days left badge to edit manually!</p>
         </header>
 
         <div id="stadiums-root"></div>
@@ -529,13 +541,39 @@
             let isOverdue = percent >= 100;
 
             if (isOverdue) {
-                statusMarkup = `<span class="status-badge status-overdue">READY</span>`;
+                statusMarkup = `<span class="status-badge status-overdue" onclick="event.stopPropagation(); editSnailTimeline(${task.id}, 0)">READY</span>`;
             } else {
                 const daysLeft = Math.ceil(msLeft / (24 * 60 * 60 * 1000));
-                statusMarkup = `<span class="status-badge status-running">${daysLeft}D LEFT</span>`;
+                statusMarkup = `<span class="status-badge status-running" onclick="event.stopPropagation(); editSnailTimeline(${task.id}, ${daysLeft})">${daysLeft}D LEFT</span>`;
             }
 
             return { percent, isOverdue, statusMarkup };
+        }
+
+        // NEW FEATURE: Manually change the countdown/timeline position
+        function editSnailTimeline(id, currentDaysLeft) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            let totalGoalMs = task.freqVal * 24 * 60 * 60 * 1000;
+            if (task.freqUnit === 'weeks') totalGoalMs = task.freqVal * 7 * 24 * 60 * 60 * 1000;
+            if (task.freqUnit === 'months') totalGoalMs = task.freqVal * 30 * 24 * 60 * 60 * 1000;
+            const maxDays = Math.ceil(totalGoalMs / (24 * 60 * 60 * 1000));
+
+            const input = prompt(`Enter how many days should be remaining (Max: ${maxDays}):`, currentDaysLeft);
+            if (input === null) return; 
+
+            const targetDaysLeft = parseInt(input);
+            if (isNaN(targetDaysLeft) || targetDaysLeft < 0 || targetDaysLeft > maxDays) {
+                alert("Invalid day entry! Please enter a valid number.");
+                return;
+            }
+
+            const targetMsLeft = targetDaysLeft * 24 * 60 * 60 * 1000;
+            task.lastDone = Date.now() - (totalGoalMs - targetMsLeft);
+
+            saveToStorage();
+            renderTracks();
         }
 
         function generateSnailSvg(shellColor, eyeColor = '#6d7587') {
