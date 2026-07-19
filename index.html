@@ -255,10 +255,9 @@
             cursor: grabbing;
         }
 
-        /* OPTIMIZED: Left column made thinner to give snails maximum track length */
         .snail-label-zone {
-            width: 130px; /* Dropped from 200px */
-            font-size: 22px; /* Adjusted slightly down for clean fit */
+            width: 130px; 
+            font-size: 22px; 
             line-height: 1.2;
             padding-right: 14px;
             border-right: 4px solid #abb2c4;
@@ -270,7 +269,7 @@
         }
 
         .snail-meta {
-            font-size: 16px; /* Scaled slightly to fit thinner column */
+            font-size: 16px; 
             color: #4b5263;
         }
 
@@ -422,7 +421,7 @@
             }
 
             .snail-label-zone {
-                width: 100%; /* Reverts to full width stacked row on mobile */
+                width: 100%; 
                 border-right: none;
                 padding-right: 36px; 
                 font-size: 24px;
@@ -578,8 +577,11 @@
             return task.freqVal * mult;
         }
 
-        function sortTasksByFrequency(taskList) {
-            return taskList.sort((a, b) => getFrequencyInDays(a) - getFrequencyInDays(b));
+        // IMPROVED SORTING: Sorts by true cycle ceiling (Max time limit), ignoring active countdown progression
+        function organizeAndSortGroup(groupTasks) {
+            const dragSorted = groupTasks.filter(t => t.customOrder !== undefined).sort((a, b) => a.customOrder - b.customOrder);
+            const defaultSorted = groupTasks.filter(t => t.customOrder === undefined).sort((a, b) => getFrequencyInDays(a) - getFrequencyInDays(b));
+            return [...dragSorted, ...defaultSorted];
         }
 
         let tasks = JSON.parse(localStorage.getItem('snail_chore_tasks'));
@@ -590,7 +592,6 @@
                 { id: 3, name: "Cut my hair", group: "beauty", freqVal: 6, freqUnit: "months", lastDone: Date.now() - (2 * 30 * 24 * 60 * 60 * 1000) },
                 { id: 4, name: "Replace toothbrush head", group: "health", freqVal: 3, freqUnit: "months", lastDone: Date.now() - (89 * 24 * 60 * 60 * 1000) }
             ];
-            tasks = sortTasksByFrequency(tasks);
             localStorage.setItem('snail_chore_tasks', JSON.stringify(tasks));
         }
 
@@ -715,7 +716,7 @@
             `;
         }
 
-        // --- Drag & Drop Core Handlers ---
+        // --- Drag & Drop Handlers ---
         function enableDrag(laneElement) {
             laneElement.setAttribute('draggable', 'true');
         }
@@ -752,22 +753,18 @@
         function handleDrop(e, targetId, groupKey) {
             e.preventDefault();
             const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
-            if (isNaN(draggedId) || draggedId === targetId) return;
-
-            const draggedTaskIndex = tasks.findIndex(t => t.id === draggedId);
-            if (draggedTaskIndex === -1) return;
-            const [draggedTask] = tasks.splice(draggedTaskIndex, 1);
+            if (isNaN(draggedId)) return;
 
             const container = this.parentElement;
             const currentLaneIdsInDOM = [...container.querySelectorAll('.stadium-lane')].map(lane => parseInt(lane.dataset.id));
             
-            const otherGroupsTasks = tasks.filter(t => t.group !== groupKey);
-            const orderedGroupTasks = currentLaneIdsInDOM.map(domId => {
-                if (domId === draggedId) return draggedTask;
-                return tasks.find(t => t.id === domId);
-            }).filter(Boolean);
+            // NEW DRAG OVERRIDE: Applies explicit manual rank coordinates to suppress automation rules
+            tasks.forEach(t => {
+                if (currentLaneIdsInDOM.includes(t.id)) {
+                    t.customOrder = currentLaneIdsInDOM.indexOf(t.id);
+                }
+            });
 
-            tasks = [...otherGroupsTasks, ...orderedGroupTasks];
             saveToStorage();
             renderTracks();
         }
@@ -778,16 +775,19 @@
             Object.keys(groups).forEach(groupKey => {
                 const groupConfig = groups[groupKey];
                 const groupTasks = tasks.filter(t => t.group === groupKey);
+                
+                // Sort tasks inside this specific division matching configuration parameters
+                const sortedGroupTasks = organizeAndSortGroup(groupTasks);
 
                 const stadiumWrapper = document.createElement('div');
                 stadiumWrapper.className = 'stadium-wrapper';
                 
                 let lanesHTML = '';
                 
-                if (groupTasks.length === 0) {
+                if (sortedGroupTasks.length === 0) {
                     lanesHTML = `<div class="empty-track-msg">No competitors assigned to this track division.</div>`;
                 } else {
-                    groupTasks.forEach((task, idx) => {
+                    sortedGroupTasks.forEach((task, idx) => {
                         const { percent, isOverdue, statusMarkup } = calculateProgress(task);
                         const leftPosition = `calc(${percent}% - 56px)`;
                         
@@ -881,8 +881,6 @@
                 freqUnit: freqUnit,
                 lastDone: Date.now()
             });
-
-            tasks = sortTasksByFrequency(tasks);
             
             document.getElementById('task-name').value = '';
             registerModal.style.display = 'none';
