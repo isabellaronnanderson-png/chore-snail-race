@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- HTML5 Drag & Drop Mobile Polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.0.8/DragDropTouch.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <style>
         :root {
@@ -219,6 +221,7 @@
             width: 100%;
         }
 
+        /* Drag and Drop Styling */
         .stadium-lane {
             position: relative;
             border-bottom: 4px dashed #abb2c4;
@@ -227,14 +230,35 @@
             align-items: center;
             min-height: 90px;
             gap: 14px;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
         .stadium-lane:last-child {
             border-bottom: none;
         }
 
+        .stadium-lane.dragging {
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .drag-handle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #838b9c;
+            cursor: grab;
+            padding: 6px 2px;
+            user-select: none;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        /* OPTIMIZED: Left column made thinner to give snails maximum track length */
         .snail-label-zone {
-            width: 200px;
-            font-size: 24px;
+            width: 130px; /* Dropped from 200px */
+            font-size: 22px; /* Adjusted slightly down for clean fit */
             line-height: 1.2;
             padding-right: 14px;
             border-right: 4px solid #abb2c4;
@@ -246,7 +270,7 @@
         }
 
         .snail-meta {
-            font-size: 18px;
+            font-size: 16px; /* Scaled slightly to fit thinner column */
             color: #4b5263;
         }
 
@@ -387,13 +411,25 @@
                 flex-direction: column;
                 align-items: stretch;
                 gap: 8px;
-                padding: 16px 4px;
+                padding: 16px 4px 16px 28px; 
+            }
+
+            .drag-handle {
+                position: absolute;
+                left: 0;
+                top: 16px;
+                height: 38px;
             }
 
             .snail-label-zone {
-                width: 100%;
+                width: 100%; /* Reverts to full width stacked row on mobile */
                 border-right: none;
                 padding-right: 36px; 
+                font-size: 24px;
+            }
+
+            .snail-meta {
+                font-size: 18px;
             }
 
             .race-field {
@@ -465,6 +501,7 @@
         <div id="stadiums-root"></div>
     </div>
 
+    <!-- MODAL 1: REGISTER NEW COMPETITOR -->
     <div class="modal" id="task-modal">
         <h2>[ REGISTER NEW RACER ]</h2>
         <div class="form-row">
@@ -498,6 +535,7 @@
         </div>
     </div>
 
+    <!-- MODAL 2: CUSTOM EDIT TIME PROMPT -->
     <div class="modal" id="edit-modal">
         <h2>[ ADJUST SNAIL TIMELINE ]</h2>
         <p id="edit-modal-label">Enter remaining days:</p>
@@ -510,6 +548,7 @@
         </div>
     </div>
 
+    <!-- MODAL 3: CUSTOM CONFIRM DISQUALIFY -->
     <div class="modal" id="delete-modal">
         <h2>[ DISQUALIFY RACER? ]</h2>
         <p id="delete-modal-msg">Are you sure you want to remove this competitor from the league?</p>
@@ -532,6 +571,17 @@
             work: { name: "Work & Admin", class: "work-title" }
         };
 
+        function getFrequencyInDays(task) {
+            let mult = 1;
+            if (task.freqUnit === 'weeks') mult = 7;
+            if (task.freqUnit === 'months') mult = 30;
+            return task.freqVal * mult;
+        }
+
+        function sortTasksByFrequency(taskList) {
+            return taskList.sort((a, b) => getFrequencyInDays(a) - getFrequencyInDays(b));
+        }
+
         let tasks = JSON.parse(localStorage.getItem('snail_chore_tasks'));
         if (!tasks) {
             tasks = [
@@ -540,6 +590,7 @@
                 { id: 3, name: "Cut my hair", group: "beauty", freqVal: 6, freqUnit: "months", lastDone: Date.now() - (2 * 30 * 24 * 60 * 60 * 1000) },
                 { id: 4, name: "Replace toothbrush head", group: "health", freqVal: 3, freqUnit: "months", lastDone: Date.now() - (89 * 24 * 60 * 60 * 1000) }
             ];
+            tasks = sortTasksByFrequency(tasks);
             localStorage.setItem('snail_chore_tasks', JSON.stringify(tasks));
         }
 
@@ -664,6 +715,63 @@
             `;
         }
 
+        // --- Drag & Drop Core Handlers ---
+        function enableDrag(laneElement) {
+            laneElement.setAttribute('draggable', 'true');
+        }
+
+        function disableDrag(laneElement) {
+            laneElement.setAttribute('draggable', 'false');
+        }
+
+        function handleDragStart(e, id) {
+            e.dataTransfer.setData('text/plain', id);
+            this.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            this.setAttribute('draggable', 'false'); 
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const container = this.parentElement;
+            const draggingElement = container.querySelector('.dragging');
+            if (!draggingElement || draggingElement === this) return;
+
+            const siblings = [...container.querySelectorAll('.stadium-lane:not(.dragging)')];
+            const nextSibling = siblings.find(sibling => {
+                const box = sibling.getBoundingClientRect();
+                return e.clientY <= box.top + box.height / 2;
+            });
+
+            container.insertBefore(draggingElement, nextSibling);
+        }
+
+        function handleDrop(e, targetId, groupKey) {
+            e.preventDefault();
+            const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
+            if (isNaN(draggedId) || draggedId === targetId) return;
+
+            const draggedTaskIndex = tasks.findIndex(t => t.id === draggedId);
+            if (draggedTaskIndex === -1) return;
+            const [draggedTask] = tasks.splice(draggedTaskIndex, 1);
+
+            const container = this.parentElement;
+            const currentLaneIdsInDOM = [...container.querySelectorAll('.stadium-lane')].map(lane => parseInt(lane.dataset.id));
+            
+            const otherGroupsTasks = tasks.filter(t => t.group !== groupKey);
+            const orderedGroupTasks = currentLaneIdsInDOM.map(domId => {
+                if (domId === draggedId) return draggedTask;
+                return tasks.find(t => t.id === domId);
+            }).filter(Boolean);
+
+            tasks = [...otherGroupsTasks, ...orderedGroupTasks];
+            saveToStorage();
+            renderTracks();
+        }
+
         function renderTracks() {
             stadiumsRoot.innerHTML = '';
 
@@ -686,11 +794,35 @@
                         const shellColor = snailColors[idx % snailColors.length];
                         const snailSvgMarkup = generateSnailSvg(shellColor);
 
+                        let unitString = task.freqUnit.toUpperCase();
+                        if (task.freqVal === 1) {
+                            if (unitString.endsWith('S')) {
+                                unitString = unitString.slice(0, -1);
+                            }
+                        }
+
                         lanesHTML += `
-                            <div class="stadium-lane">
+                            <div class="stadium-lane" 
+                                 data-id="${task.id}"
+                                 draggable="false"
+                                 ondragstart="handleDragStart.call(this, event, ${task.id})"
+                                 ondragend="handleDragEnd.call(this, event)"
+                                 ondragover="handleDragOver.call(this, event)"
+                                 ondragleave="event.preventDefault()"
+                                 ondrop="handleDrop.call(this, event, ${task.id}, '${groupKey}')">
+                                 
+                                <div class="drag-handle" 
+                                     onmousedown="enableDrag(this.closest('.stadium-lane'))" 
+                                     ontouchstart="enableDrag(this.closest('.stadium-lane'))"
+                                     onmouseup="disableDrag(this.closest('.stadium-lane'))"
+                                     ontouchend="disableDrag(this.closest('.stadium-lane'))"
+                                     title="Drag to Reorder">
+                                    <i data-lucide="grip-vertical" style="width:20px; height:20px;"></i>
+                                </div>
+
                                 <div class="snail-label-zone">
                                     <strong>${task.name}</strong>
-                                    <div class="snail-meta">EVERY ${task.freqVal} ${task.freqUnit.toUpperCase()}</div>
+                                    <div class="snail-meta">EVERY ${task.freqVal} ${unitString}</div>
                                     ${statusMarkup}
                                 </div>
                                 <div class="race-field">
@@ -750,6 +882,8 @@
                 lastDone: Date.now()
             });
 
+            tasks = sortTasksByFrequency(tasks);
+            
             document.getElementById('task-name').value = '';
             registerModal.style.display = 'none';
             saveToStorage();
