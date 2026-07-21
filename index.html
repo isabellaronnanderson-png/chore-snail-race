@@ -17,14 +17,14 @@
     <style>
         :root {
             --bg-color: #e2e7f8; /* Fresh light periwinkle blue */
-            --stadium-bg: #d4ddf2; 
+            --stadium-bg: #e2e7f8; /* Matched to outside periwinkle blue */
             --text-main: #2b3240;
             --text-muted: #5c6475;
             --border-pixel: 4px solid #6d7587;
             --font-pixel: 'VT323', monospace;
             --ui-card-bg: #f4f7fd; 
             --ui-shadow: 0 8px 0px #bdcae8;
-            --track-shadow: 0 4px 0px #b2bfdf;
+            --track-shadow: 0 4px 0px #c2ceea;
             --race-field-height: 52px;
         }
 
@@ -207,7 +207,6 @@
             letter-spacing: 1px;
         }
 
-        /* Light, fresh category header colors */
         .house-title { color: #e07a38; } 
         .beauty-title { color: #e66b93; } 
         .health-title { color: #3fb978; } 
@@ -229,7 +228,7 @@
         /* Drag and Drop Styling */
         .stadium-lane {
             position: relative;
-            border-bottom: 4px dashed #abb2c4;
+            border-bottom: 4px dashed #b8c3e0;
             padding: 16px 0;
             display: flex;
             align-items: center;
@@ -243,7 +242,7 @@
 
         .stadium-lane.dragging {
             opacity: 0.4;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 8px;
         }
 
@@ -265,7 +264,7 @@
             font-size: 22px; 
             line-height: 1.2;
             padding-right: 14px;
-            border-right: 4px solid #abb2c4;
+            border-right: 4px solid #b8c3e0;
             word-break: break-word;
             color: var(--text-main);
             display: flex;
@@ -285,10 +284,10 @@
             margin-left: 14px; 
             background: repeating-linear-gradient(
                 90deg,
-                rgba(255, 255, 255, 0.22) 0px,
-                rgba(255, 255, 255, 0.22) 24px,
-                rgba(255, 255, 255, 0.42) 24px,
-                rgba(255, 255, 255, 0.42) 48px
+                rgba(255, 255, 255, 0.35) 0px,
+                rgba(255, 255, 255, 0.35) 24px,
+                rgba(255, 255, 255, 0.60) 24px,
+                rgba(255, 255, 255, 0.60) 48px
             );
             border-radius: 4px;
             padding-right: 64px;
@@ -443,13 +442,13 @@
                 height: 64px !important; 
                 background: repeating-linear-gradient(
                     90deg,
-                    rgba(255, 255, 255, 0.22) 0px,
-                    rgba(255, 255, 255, 0.22) 24px,
-                    rgba(255, 255, 255, 0.42) 24px,
-                    rgba(255, 255, 255, 0.42) 48px
+                    rgba(255, 255, 255, 0.35) 0px,
+                    rgba(255, 255, 255, 0.35) 24px,
+                    rgba(255, 255, 255, 0.60) 24px,
+                    rgba(255, 255, 255, 0.60) 48px
                 ) !important;
-                border-top: 4px dashed #9ca4b5;
-                border-bottom: 4px dashed #9ca4b5;
+                border-top: 4px dashed #a3b2d8;
+                border-bottom: 4px dashed #a3b2d8;
                 border-radius: 0px;
             }
 
