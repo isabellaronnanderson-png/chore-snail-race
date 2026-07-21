@@ -189,8 +189,8 @@
             flex: 1;
             text-align: center;
         }
-        .btn-success { background: #AFFFAB; box-shadow: 0 4px 0 #72ca6e; color: #1e522f; }
-        .btn-success:active { transform: translateY(2px); box-shadow: 0 2px 0 #72ca6e; }
+        .btn-success { background: #65DE59; box-shadow: 0 4px 0 #4bbd41; color: #1e522f; }
+        .btn-success:active { transform: translateY(2px); box-shadow: 0 2px 0 #4bbd41; }
         .btn-danger { background: #FAAAD7; box-shadow: 0 4px 0 #ca6d9f; color: #731e4d; }
         .btn-danger:active { transform: translateY(2px); box-shadow: 0 2px 0 #ca6d9f; }
 
@@ -211,7 +211,7 @@
         /* CUSTOM HEADER COLORS */
         .house-title { color: #FFD096; } 
         .beauty-title { color: #FAAAD7; } 
-        .health-title { color: #AFFFAB; } 
+        .health-title { color: #65DE59; } /* Custom Fresh Green */
         .work-title { color: #7AB0FF; } 
 
         .group-stadium {
@@ -353,6 +353,7 @@
             to { transform: translateY(-65%); }
         }
 
+        /* RESTORED MUTED RED/GREEN STATUS BADGES */
         .status-badge {
             font-size: 16px;
             padding: 2px 8px;
@@ -365,13 +366,13 @@
             filter: brightness(0.9);
         }
         .status-overdue { 
-            background: #FAAAD7;
-            color: #731e4d; 
+            background: #f2c9c9; /* Soft muted red */
+            color: #8c3232; 
             font-weight: bold; 
             animation: blink 1.2s steps(2) infinite;
         }
         .status-running { 
-            background: #AFFFAB;
+            background: #c9e6d0; /* Soft muted green */
             color: #1e522f; 
         }
 
@@ -565,7 +566,7 @@
 
     <script>
         const snailColors = [
-            '#FAAAD7', '#AFFFAB', '#7AB0FF', '#FFD096', 
+            '#FAAAD7', '#65DE59', '#7AB0FF', '#FFD096', 
             '#eebadc', '#cca6ed', '#eee7ad', '#f2b591'
         ];
 
