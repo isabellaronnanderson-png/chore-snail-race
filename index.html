@@ -16,15 +16,15 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
     <style>
         :root {
-            --bg-color: #DEEDFF; /* Custom Outer Limits Blue */
-            --stadium-bg: #DEEDFF; /* Custom Racetrack Blue */
+            --bg-color: #DBE7FF; /* Custom Blue */
+            --stadium-bg: #DBE7FF; /* Custom Racetrack Blue */
             --text-main: #2b3240;
             --text-muted: #5c6475;
             --border-pixel: 4px solid #6d7587;
             --font-pixel: 'VT323', monospace;
             --ui-card-bg: #f7faff; 
-            --ui-shadow: 0 8px 0px #b8d5f7;
-            --track-shadow: 0 4px 0px #b8d5f7;
+            --ui-shadow: 0 8px 0px #b0cbf2;
+            --track-shadow: 0 4px 0px #b0cbf2;
             --race-field-height: 52px;
         }
 
@@ -96,7 +96,7 @@
             position: absolute;
             top: -20px;
             right: 20px;
-            background: #FFD096; 
+            background: #F0BB69; 
             color: #ffffff;
             border: var(--border-pixel);
             border-radius: 8px;
@@ -106,13 +106,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 0px #d8a368;
+            box-shadow: 0 4px 0px #c79446;
             z-index: 10;
         }
         .fab-btn:hover {
-            background: #f7c388;
+            background: #e8b15d;
             transform: translateY(2px);
-            box-shadow: 0 2px 0px #d8a368;
+            box-shadow: 0 2px 0px #c79446;
         }
 
         /* Universally Styled Modals */
@@ -189,8 +189,8 @@
             flex: 1;
             text-align: center;
         }
-        .btn-success { background: #65DE59; box-shadow: 0 4px 0 #4bbd41; color: #1e522f; }
-        .btn-success:active { transform: translateY(2px); box-shadow: 0 2px 0 #4bbd41; }
+        .btn-success { background: #73D169; box-shadow: 0 4px 0 #52af49; color: #1e522f; }
+        .btn-success:active { transform: translateY(2px); box-shadow: 0 2px 0 #52af49; }
         .btn-danger { background: #FAAAD7; box-shadow: 0 4px 0 #ca6d9f; color: #731e4d; }
         .btn-danger:active { transform: translateY(2px); box-shadow: 0 2px 0 #ca6d9f; }
 
@@ -209,9 +209,9 @@
         }
 
         /* CUSTOM HEADER COLORS */
-        .house-title { color: #FFD096; } 
+        .house-title { color: #F0BB69; } 
         .beauty-title { color: #FAAAD7; } 
-        .health-title { color: #65DE59; } /* Custom Fresh Green */
+        .health-title { color: #73D169; } 
         .work-title { color: #7AB0FF; } 
 
         .group-stadium {
@@ -230,7 +230,7 @@
         /* Drag and Drop Styling */
         .stadium-lane {
             position: relative;
-            border-bottom: 4px dashed #a2c4f0;
+            border-bottom: 4px dashed #9ebfe8;
             padding: 16px 0;
             display: flex;
             align-items: center;
@@ -266,7 +266,7 @@
             font-size: 22px; 
             line-height: 1.2;
             padding-right: 14px;
-            border-right: 4px solid #a2c4f0;
+            border-right: 4px solid #9ebfe8;
             word-break: break-word;
             color: var(--text-main);
             display: flex;
@@ -353,7 +353,6 @@
             to { transform: translateY(-65%); }
         }
 
-        /* RESTORED MUTED RED/GREEN STATUS BADGES */
         .status-badge {
             font-size: 16px;
             padding: 2px 8px;
@@ -366,13 +365,13 @@
             filter: brightness(0.9);
         }
         .status-overdue { 
-            background: #f2c9c9; /* Soft muted red */
+            background: #f2c9c9;
             color: #8c3232; 
             font-weight: bold; 
             animation: blink 1.2s steps(2) infinite;
         }
         .status-running { 
-            background: #c9e6d0; /* Soft muted green */
+            background: #c9e6d0;
             color: #1e522f; 
         }
 
@@ -450,8 +449,8 @@
                     rgba(255, 255, 255, 0.75) 24px,
                     rgba(255, 255, 255, 0.75) 48px
                 ) !important;
-                border-top: 4px dashed #93b9f0;
-                border-bottom: 4px dashed #93b9f0;
+                border-top: 4px dashed #8fb4e8;
+                border-bottom: 4px dashed #8fb4e8;
                 border-radius: 0px;
             }
 
@@ -566,7 +565,7 @@
 
     <script>
         const snailColors = [
-            '#FAAAD7', '#65DE59', '#7AB0FF', '#FFD096', 
+            '#FAAAD7', '#73D169', '#7AB0FF', '#F0BB69', 
             '#eebadc', '#cca6ed', '#eee7ad', '#f2b591'
         ];
 
