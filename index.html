@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snail Race Chore Tracker</title>
+
+    <!-- Embedded Retro Pixel Snail Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12' shape-rendering='crispEdges'%3E%3Cpath d='M2 10h12v1H2zM1 9h12v1H1z' fill='%23fce5bd'/%3E%3Cpath d='M11 8h2v1h-2zM12 5h1v3h-1zM13 4h1v1h-1z' fill='%23fce5bd'/%3E%3Cpath d='M13 2h1v1h-1z' fill='%236d7587'/%3E%3Cpath d='M10 3h1v1h-1zM10 2h1v1h-1z' fill='%23fce5bd'/%3E%3Cpath d='M10 1h1v1h-1z' fill='%236d7587'/%3E%3Cpath d='M4 4h5v5H4z' fill='%23e39696'/%3E%3Cpath d='M5 3h3v1H5zM5 9h3v1H5zM3 5h1v3H3zM9 5h1v3H9z' fill='%23e39696'/%3E%3Cpath d='M5 5h3v2H5z' fill='%23ffffff' opacity='0.4'/%3E%3Cpath d='M6 6h1v1H6z' fill='%23e39696'/%3E%3C/svg%3E">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -577,7 +581,6 @@
             return task.freqVal * mult;
         }
 
-        // IMPROVED SORTING: Sorts by true cycle ceiling (Max time limit), ignoring active countdown progression
         function organizeAndSortGroup(groupTasks) {
             const dragSorted = groupTasks.filter(t => t.customOrder !== undefined).sort((a, b) => a.customOrder - b.customOrder);
             const defaultSorted = groupTasks.filter(t => t.customOrder === undefined).sort((a, b) => getFrequencyInDays(a) - getFrequencyInDays(b));
@@ -758,7 +761,6 @@
             const container = this.parentElement;
             const currentLaneIdsInDOM = [...container.querySelectorAll('.stadium-lane')].map(lane => parseInt(lane.dataset.id));
             
-            // NEW DRAG OVERRIDE: Applies explicit manual rank coordinates to suppress automation rules
             tasks.forEach(t => {
                 if (currentLaneIdsInDOM.includes(t.id)) {
                     t.customOrder = currentLaneIdsInDOM.indexOf(t.id);
@@ -776,7 +778,6 @@
                 const groupConfig = groups[groupKey];
                 const groupTasks = tasks.filter(t => t.group === groupKey);
                 
-                // Sort tasks inside this specific division matching configuration parameters
                 const sortedGroupTasks = organizeAndSortGroup(groupTasks);
 
                 const stadiumWrapper = document.createElement('div');
